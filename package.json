@@ -1,0 +1,31 @@
+{
+  "name": "template-tdd-vue-cdn",
+  "version": "1.0.0",
+  "description": "Template para TDD con Vue CDN usando Import Maps",
+  "type": "module",
+  "scripts": {
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run",
+    "dev": "live-server --port=3000 --host=localhost",
+    "start": "npm run dev"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.4.8",
+    "@testing-library/user-event": "^14.5.2",
+    "@vitest/coverage-v8": "^2.0.5",
+    "@vitest/ui": "^2.0.5",
+    "cypress": "^13.14.2",
+    "jsdom": "^25.0.0",
+    "live-server": "^1.2.2",
+    "vitest": "^2.0.5",
+    "vue": "^3.4.0"
+  },
+  "keywords": ["vue", "tdd", "cdn", "import-maps", "vitest", "cypress"],
+  "author": "",
+  "license": "MIT"
+}
