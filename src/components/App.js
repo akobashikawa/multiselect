@@ -33,6 +33,18 @@ export const App = {
             console.log('Selección actual:', selectedItems_a.value);
         };
 
+        const selectedItems_b = ref([]);
+
+        function handler_b(item) {
+            console.log('Selección actual:', selectedItems_b.value);
+        };
+
+        const selectedItems_c = ref([]);
+
+        function handler_c(item) {
+            console.log('Selección actual:', selectedItems_c.value);
+        };
+
         return {
             title,
             subtitle,
@@ -40,7 +52,11 @@ export const App = {
             items_b,
             items_c,
             selectedItems_a,
-            handler_a
+            selectedItems_b,
+            selectedItems_c,
+            handler_a,
+            handler_b,
+            handler_c
         };
     },
     template: `
@@ -67,10 +83,17 @@ export const App = {
                 </ul>
                 
                 <h3>b</h3>
+                {{ selectedItems_b }}
                 <ul>
                     <li v-for="item in items_b" :key="item.value">
                         <label>
-                            <input type="checkbox" name="input-checkbox-b" :value="item.value">
+                            <input 
+                                type="checkbox" 
+                                name="input-checkbox-b" 
+                                :value="item.value"
+                                v-model="selectedItems_b"
+                                @change="handler_b(item)"
+                            >
                             {{ item.label }}
                             {{ item.sources }}
                         </label>
@@ -78,10 +101,17 @@ export const App = {
                 </ul>
 
                 <h3>c</h3>
+                {{ selectedItems_c }}
                 <ul>
                     <li v-for="item in items_c" :key="item.value">
                         <label>
-                            <input type="checkbox" name="input-checkbox-c" :value="item.value">
+                            <input 
+                                type="checkbox" 
+                                name="input-checkbox-c" 
+                                :value="item.value"
+                                v-model="selectedItems_c"
+                                @change="handler_c(item)"
+                            >
                             {{ item.label }}
                         </label>
                     </li>
