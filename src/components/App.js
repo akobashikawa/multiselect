@@ -10,21 +10,21 @@ export const App = {
     setup() {
         const title = ref('Multiselect');
         const subtitle = ref('Seleccionando opciones');
-        
+
         const items_a = ref([
             { value: 'a0', label: 'Option a0' },
             { value: 'a1', label: 'Option a1' },
             { value: 'a2', label: 'Option a2' }
         ]);
         const items_b = ref([
-            { value: 'b0', label: 'Option b0', sources: ['a0']},
-            { value: 'b1', label: 'Option b1', sources: ['a0', 'a1']},
-            { value: 'b2', label: 'Option b2', sources: ['a1', 'a2']}
+            { value: 'b0', label: 'Option b0', sources: ['a0'] },
+            { value: 'b1', label: 'Option b1', sources: ['a0', 'a1'] },
+            { value: 'b2', label: 'Option b2', sources: ['a1', 'a2'] }
         ]);
         const items_c = ref([
-            { value: 'c0', label: 'Option c0' },
-            { value: 'c1', label: 'Option c1' },
-            { value: 'c2', label: 'Option c2' }
+            { value: 'c0', label: 'Option c0', sources: ['b0'] },
+            { value: 'c1', label: 'Option c1', sources: ['b0', 'b1'] },
+            { value: 'c2', label: 'Option c2', sources: ['b1', 'b2'] }
         ]);
 
         const selectedItems_a = ref([]);
@@ -113,6 +113,7 @@ export const App = {
                                 @change="handler_c(item)"
                             >
                             {{ item.label }}
+                            {{ item.sources }}
                         </label>
                     </li>
                 </ul>
