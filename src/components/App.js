@@ -142,14 +142,16 @@ export const App = {
                 {{ selectedItems_a }} {{ autoSelected_a }}
                 <ul>
                     <li v-for="item in items_a" :key="item.value">
-                        <label :class="{ bold: autoSelected_a.includes(item.value) && !selectedItems_a.includes(item.value) }">
+                        <label>
                             <input 
                                 type="checkbox" 
                                 name="input-checkbox-a" 
                                 :value="item.value"
                                 v-model="selectedItems_a"
                             >
-                            {{ item.label }}
+                            <span :class="{ selected: selectedItems_a.includes(item.value), autoselected: autoSelected_a.includes(item.value) && !selectedItems_a.includes(item.value) }">
+                                {{ item.label }}
+                            </span>
                         </label>
                     </li>
                 </ul>
@@ -158,15 +160,17 @@ export const App = {
                 {{ selectedItems_b }} {{ autoSelected_b }}
                 <ul>
                     <li v-for="item in items_b" :key="item.value">
-                        <label :class="{ bold: autoSelected_b.includes(item.value) && !selectedItems_b.includes(item.value) }">
+                        <label>
                             <input 
                                 type="checkbox" 
                                 name="input-checkbox-b" 
                                 :value="item.value"
                                 v-model="selectedItems_b"
                             >
-                            {{ item.label }}
-                            {{ item.sources }}
+                            <span :class="{ selected: selectedItems_b.includes(item.value), autoselected: autoSelected_b.includes(item.value) && !selectedItems_b.includes(item.value) }">
+                                {{ item.label }}
+                                {{ item.sources }}
+                            </span>
                         </label>
                     </li>
                 </ul>
@@ -175,15 +179,17 @@ export const App = {
                 {{ selectedItems_c }} {{ autoSelected_c }}
                 <ul>
                     <li v-for="item in items_c" :key="item.value">
-                        <label :class="{ bold: autoSelected_c.includes(item.value) && !selectedItems_c.includes(item.value) }">
+                        <label>
                             <input 
                                 type="checkbox" 
                                 name="input-checkbox-c" 
                                 :value="item.value"
                                 v-model="selectedItems_c"
                             >
-                            {{ item.label }}
-                            {{ item.sources }}
+                            <span :class="{ selected: selectedItems_c.includes(item.value), autoselected: autoSelected_c.includes(item.value) && !selectedItems_c.includes(item.value) }">
+                                {{ item.label }}
+                                {{ item.sources }}
+                            </span>
                         </label>
                     </li>
                 </ul>
@@ -193,7 +199,12 @@ export const App = {
         </div>
         
         <style>
-            .bold {
+            .selected {
+                color: green;
+            }
+            
+            .autoselected {
+                color: blue;
                 font-weight: bold;
             }
         </style>
