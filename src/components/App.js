@@ -198,16 +198,6 @@ export const App = {
             
         </div>
         
-        <style>
-            .selected {
-                color: green;
-            }
-            
-            .autoselected {
-                color: blue;
-                font-weight: bold;
-            }
-        </style>
     `
 };
 
