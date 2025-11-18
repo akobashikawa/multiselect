@@ -139,7 +139,8 @@ export const App = {
                 <p>{{ subtitle }}</p>
 
                 <h3>a</h3>
-                {{ selectedItems_a }} {{ autoSelected_a }}
+                <span class="selected">{{ selectedItems_a }}</span> 
+                <span class="autoselected">{{ autoSelected_a }}</span>
                 <ul>
                     <li v-for="item in items_a" :key="item.value">
                         <label>
@@ -157,7 +158,8 @@ export const App = {
                 </ul>
                 
                 <h3>b</h3>
-                {{ selectedItems_b }} {{ autoSelected_b }}
+                <span class="selected">{{ selectedItems_b }}</span> 
+                <span class="autoselected">{{ autoSelected_b }}</span>
                 <ul>
                     <li v-for="item in items_b" :key="item.value">
                         <label>
@@ -176,7 +178,8 @@ export const App = {
                 </ul>
 
                 <h3>c</h3>
-                {{ selectedItems_c }} {{ autoSelected_c }}
+                <span class="selected">{{ selectedItems_c }}</span> 
+                <span class="autoselected">{{ autoSelected_c }}</span>
                 <ul>
                     <li v-for="item in items_c" :key="item.value">
                         <label>
