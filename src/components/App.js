@@ -116,17 +116,7 @@ export const App = {
             return Array.from(auto);
         });
 
-        function handler_a(item) {
-            console.log('Selección actual:', selectedItems_a.value);
-        };
 
-        function handler_b(item) {
-            console.log('Selección actual:', selectedItems_b.value);
-        };
-
-        function handler_c(item) {
-            console.log('Selección actual:', selectedItems_c.value);
-        };
 
         return {
             title,
@@ -139,10 +129,7 @@ export const App = {
             selectedItems_c,
             autoSelected_a,
             autoSelected_b,
-            autoSelected_c,
-            handler_a,
-            handler_b,
-            handler_c
+            autoSelected_c
         };
     },
     template: `
@@ -161,7 +148,6 @@ export const App = {
                                 name="input-checkbox-a" 
                                 :value="item.value"
                                 v-model="selectedItems_a"
-                                @change="handler_a(item)"
                             >
                             {{ item.label }}
                         </label>
@@ -178,7 +164,6 @@ export const App = {
                                 name="input-checkbox-b" 
                                 :value="item.value"
                                 v-model="selectedItems_b"
-                                @change="handler_b(item)"
                             >
                             {{ item.label }}
                             {{ item.sources }}
@@ -196,7 +181,6 @@ export const App = {
                                 name="input-checkbox-c" 
                                 :value="item.value"
                                 v-model="selectedItems_c"
-                                @change="handler_c(item)"
                             >
                             {{ item.label }}
                             {{ item.sources }}
