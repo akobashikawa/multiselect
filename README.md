@@ -88,11 +88,49 @@ npm run cypress:open
 
 ## Implementación Técnica
 
+### Arquitectura de Componentes
+
+El proyecto está organizado en 3 componentes con responsabilidades claramente separadas:
+
+#### 1. **Selector.js** (~70 líneas)
+Componente de presentación simple que muestra una lista de items con checkboxes.
+
+**Responsabilidades:**
+- Renderizar lista de items
+- Manejar selección individual vía v-model
+- Aplicar estilos visuales (selected/autoselected)
+
+**Props:**
+- `title`: Título del selector
+- `items`: Array de items a mostrar
+- `selectedItems`: Items seleccionados (v-model)
+- `autoSelectedItems`: Items auto-seleccionados
+- `showSources`: Mostrar/ocultar sources
+
+#### 2. **MultiSelector.js** (~165 líneas)
+Componente de lógica que contiene toda la propagación bidireccional.
+
+**Responsabilidades:**
+- Gestionar 3 instancias de `Selector` (A, B, C)
+- Implementar lógica de auto-selección (computed properties)
+- Propagar selecciones forward (A→B→C) y backward (C→B→A)
+
+**Props:**
+- `itemsA`, `itemsB`, `itemsC`: Arrays de items para cada nivel
+
+#### 3. **App.js** (~60 líneas)
+Componente raíz que provee los datos.
+
+**Responsabilidades:**
+- Definir estructura de datos (items con sources)
+- Pasar datos a `MultiSelector`
+- Layout general de la aplicación
+
 ### Vue 3 Composition API
 
-- **Computed Properties**: Auto-selección calculada reactivamente
-- **v-model**: Binding bidireccional para checkboxes
-- **Dynamic Classes**: Aplicación condicional de estilos
+- **Computed Properties**: Auto-selección calculada reactivamente en `MultiSelector`
+- **v-model**: Binding bidireccional entre `MultiSelector` y `Selector`
+- **Dynamic Classes**: Aplicación condicional de estilos en `Selector`
 
 ### Estilos CSS
 
@@ -115,14 +153,26 @@ Los estilos están definidos en `index.html` (no en el componente) porque Vue CD
 ```
 multiselect/
 ├── src/
-│   ├── app.js              # Punto de entrada
+│   ├── app.js                  # Punto de entrada
 │   └── components/
-│       └── App.js          # Componente principal con lógica de multiselección
+│       ├── App.js              # Componente raíz (datos)
+│       ├── MultiSelector.js    # Lógica de propagación
+│       └── Selector.js         # Componente de presentación
 ├── tests/
-│   └── app.test.js         # Tests unitarios
-├── cypress/                # Tests E2E
-├── index.html              # HTML principal con estilos CSS
+│   └── app.test.js             # Tests unitarios
+├── cypress/                    # Tests E2E
+├── index.html                  # HTML principal con estilos CSS
 └── package.json
+```
+
+### Flujo de Datos
+
+```
+App.js (datos)
+    ↓ props
+MultiSelector.js (lógica)
+    ↓ props + v-model
+Selector.js (presentación)
 ```
 
 ## Tecnologías
