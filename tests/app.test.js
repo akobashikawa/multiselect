@@ -1,88 +1,223 @@
 import { describe, it, expect } from 'vitest';
 import { App } from '../src/components/App.js';
 
-describe('App Component', () => {
+describe('App Component - Multiselect', () => {
     it('should have correct component structure', () => {
         expect(App.name).toBe('App');
-        expect(App.components).toBeDefined();
         expect(App.setup).toBeDefined();
         expect(App.template).toBeDefined();
     });
 
-    it('should include Counter component as dependency', () => {
-        expect(App.components.Counter).toBeDefined();
-    });
-
-    it('should have template with correct structure', () => {
-        const template = App.template;
-        
-        // Verificar estructura principal
-        expect(template).toContain('<div class="container">');
-        expect(template).toContain('<div class="header">');
-        
-        // Verificar elementos del header
-        expect(template).toContain('<h1>{{ title }}</h1>');
-        expect(template).toContain('<p>{{ subtitle }}</p>');
-        expect(template).toContain('data-testid="current-value"');
-        
-        // Verificar uso del componente Counter
-        expect(template).toContain('<counter');
-        expect(template).toContain(':initial-value="0"');
-        expect(template).toContain('@update:count="handleCountUpdate"');
-        expect(template).toContain('data-testid="counter-component"');
-    });
-
-    it('should have conditional rendering for current value', () => {
-        const template = App.template;
-        expect(template).toContain('v-if="currentCount !== 0"');
-        expect(template).toContain('Valor actual: {{ currentCount }}');
-    });
-
-    it('should have correct CSS classes', () => {
-        const template = App.template;
-        expect(template).toContain('class="container"');
-        expect(template).toContain('class="header"');
-        expect(template).toContain('class="current-value"');
-    });
-
-    it('should have proper data-testid attributes for testing', () => {
-        const template = App.template;
-        expect(template).toContain('data-testid="current-value"');
-        expect(template).toContain('data-testid="counter-component"');
-    });
-
-    describe('App Component Setup', () => {
+    describe('Setup function', () => {
         it('should initialize with correct default values', () => {
-            const mockEmit = vi.fn();
-            const { title, subtitle, currentCount } = App.setup({}, { emit: mockEmit });
-            
-            expect(title.value).toBe('Contador TDD');
-            expect(subtitle.value).toBe('Template para TDD con Vue CDN + Import Maps');
-            expect(currentCount.value).toBe(0);
+            const setup = App.setup();
+
+            expect(setup.title.value).toBe('Multiselect');
+            expect(setup.subtitle.value).toBe('Seleccionando opciones');
+            expect(setup.selectedItems_a.value).toEqual([]);
+            expect(setup.selectedItems_b.value).toEqual([]);
+            expect(setup.selectedItems_c.value).toEqual([]);
         });
 
-        it('should provide handleCountUpdate function', () => {
-            const mockEmit = vi.fn();
-            const setupResult = App.setup({}, { emit: mockEmit });
-            
-            expect(setupResult.handleCountUpdate).toBeDefined();
-            expect(typeof setupResult.handleCountUpdate).toBe('function');
+        it('should have items with correct structure', () => {
+            const setup = App.setup();
+
+            expect(setup.items_a.value).toHaveLength(3);
+            expect(setup.items_b.value).toHaveLength(3);
+            expect(setup.items_c.value).toHaveLength(3);
+
+            // Check B items have sources
+            setup.items_b.value.forEach(item => {
+                expect(item.sources).toBeDefined();
+                expect(Array.isArray(item.sources)).toBe(true);
+            });
+
+            // Check C items have sources
+            setup.items_c.value.forEach(item => {
+                expect(item.sources).toBeDefined();
+                expect(Array.isArray(item.sources)).toBe(true);
+            });
+        });
+    });
+
+    describe('Auto-selection logic - A -> B -> C', () => {
+        it('should auto-select B items when A is selected', () => {
+            const setup = App.setup();
+
+            // Select a0
+            setup.selectedItems_a.value = ['a0'];
+
+            // b0 and b1 should be auto-selected (they have a0 as source)
+            expect(setup.autoSelected_b.value).toContain('b0');
+            expect(setup.autoSelected_b.value).toContain('b1');
+            expect(setup.autoSelected_b.value).not.toContain('b2');
         });
 
-        it('should update currentCount when handleCountUpdate is called', () => {
-            const mockEmit = vi.fn();
-            const { currentCount, handleCountUpdate } = App.setup({}, { emit: mockEmit });
-            
-            expect(currentCount.value).toBe(0);
-            
-            handleCountUpdate(5);
-            expect(currentCount.value).toBe(5);
-            
-            handleCountUpdate(-3);
-            expect(currentCount.value).toBe(-3);
-            
-            handleCountUpdate(0);
-            expect(currentCount.value).toBe(0);
+        it('should auto-select C items when A is selected (via B)', () => {
+            const setup = App.setup();
+
+            // Select a0
+            setup.selectedItems_a.value = ['a0'];
+
+            // c0 and c1 should be auto-selected (via b0 and b1)
+            expect(setup.autoSelected_c.value).toContain('c0');
+            expect(setup.autoSelected_c.value).toContain('c1');
+        });
+
+        it('should handle multiple A selections', () => {
+            const setup = App.setup();
+
+            // Select a0 and a1
+            setup.selectedItems_a.value = ['a0', 'a1'];
+
+            // All B items should be auto-selected
+            expect(setup.autoSelected_b.value).toContain('b0');
+            expect(setup.autoSelected_b.value).toContain('b1');
+            expect(setup.autoSelected_b.value).toContain('b2');
+
+            // All C items should be auto-selected
+            expect(setup.autoSelected_c.value).toContain('c0');
+            expect(setup.autoSelected_c.value).toContain('c1');
+            expect(setup.autoSelected_c.value).toContain('c2');
+        });
+    });
+
+    describe('Auto-selection logic - B -> C', () => {
+        it('should auto-select C items when B is selected', () => {
+            const setup = App.setup();
+
+            // Select b0
+            setup.selectedItems_b.value = ['b0'];
+
+            // c0 and c1 should be auto-selected
+            expect(setup.autoSelected_c.value).toContain('c0');
+            expect(setup.autoSelected_c.value).toContain('c1');
+            expect(setup.autoSelected_c.value).not.toContain('c2');
+        });
+    });
+
+    describe('Auto-selection logic - B -> A', () => {
+        it('should auto-select A items when B is selected', () => {
+            const setup = App.setup();
+
+            // Select b0
+            setup.selectedItems_b.value = ['b0'];
+
+            // a0 should be auto-selected (source of b0)
+            expect(setup.autoSelected_a.value).toContain('a0');
+            expect(setup.autoSelected_a.value).not.toContain('a1');
+            expect(setup.autoSelected_a.value).not.toContain('a2');
+        });
+
+        it('should handle B items with multiple sources', () => {
+            const setup = App.setup();
+
+            // Select b1 (has sources: a0, a1)
+            setup.selectedItems_b.value = ['b1'];
+
+            // Both a0 and a1 should be auto-selected
+            expect(setup.autoSelected_a.value).toContain('a0');
+            expect(setup.autoSelected_a.value).toContain('a1');
+            expect(setup.autoSelected_a.value).not.toContain('a2');
+        });
+    });
+
+    describe('Auto-selection logic - C -> B -> A', () => {
+        it('should auto-select B items when C is selected', () => {
+            const setup = App.setup();
+
+            // Select c0
+            setup.selectedItems_c.value = ['c0'];
+
+            // b0 should be auto-selected
+            expect(setup.autoSelected_b.value).toContain('b0');
+            expect(setup.autoSelected_b.value).not.toContain('b1');
+            expect(setup.autoSelected_b.value).not.toContain('b2');
+        });
+
+        it('should auto-select A items when C is selected (via B)', () => {
+            const setup = App.setup();
+
+            // Select c0 (sources: b0, which has source: a0)
+            setup.selectedItems_c.value = ['c0'];
+
+            // a0 should be auto-selected
+            expect(setup.autoSelected_a.value).toContain('a0');
+        });
+
+        it('should handle C items with multiple sources', () => {
+            const setup = App.setup();
+
+            // Select c1 (sources: b0, b1)
+            setup.selectedItems_c.value = ['c1'];
+
+            // b0 and b1 should be auto-selected
+            expect(setup.autoSelected_b.value).toContain('b0');
+            expect(setup.autoSelected_b.value).toContain('b1');
+
+            // a0 and a1 should be auto-selected (sources of b0 and b1)
+            expect(setup.autoSelected_a.value).toContain('a0');
+            expect(setup.autoSelected_a.value).toContain('a1');
+        });
+    });
+
+    describe('Complex scenarios', () => {
+        it('should handle mixed selections across all levels', () => {
+            const setup = App.setup();
+
+            // Select a1 and c2
+            setup.selectedItems_a.value = ['a1'];
+            setup.selectedItems_c.value = ['c2'];
+
+            // From a1: b1 and b2 should be auto-selected
+            expect(setup.autoSelected_b.value).toContain('b1');
+            expect(setup.autoSelected_b.value).toContain('b2');
+
+            // From a1 via B: c1 and c2 should be auto-selected
+            expect(setup.autoSelected_c.value).toContain('c1');
+            expect(setup.autoSelected_c.value).toContain('c2');
+
+            // From c2: b1 and b2 are sources
+            expect(setup.autoSelected_b.value).toContain('b1');
+            expect(setup.autoSelected_b.value).toContain('b2');
+
+            // From c2 via B: a1 and a2 should be auto-selected
+            expect(setup.autoSelected_a.value).toContain('a1');
+            expect(setup.autoSelected_a.value).toContain('a2');
+        });
+
+        it('should not include manually selected items in auto-selected', () => {
+            const setup = App.setup();
+
+            // Manually select a0
+            setup.selectedItems_a.value = ['a0'];
+
+            // a0 should NOT be in autoSelected_a even if it would be auto-selected
+            expect(setup.autoSelected_a.value).not.toContain('a0');
+        });
+    });
+
+    describe('Template structure', () => {
+        it('should have bold class binding for auto-selected items', () => {
+            const template = App.template;
+
+            // Check for bold class bindings
+            expect(template).toContain(':class="{ bold: autoSelected_a.includes(item.value) && !selectedItems_a.includes(item.value) }"');
+            expect(template).toContain(':class="{ bold: autoSelected_b.includes(item.value) && !selectedItems_b.includes(item.value) }"');
+            expect(template).toContain(':class="{ bold: autoSelected_c.includes(item.value) && !selectedItems_c.includes(item.value) }"');
+        });
+
+        it('should have bold CSS style', () => {
+            const template = App.template;
+            expect(template).toContain('.bold');
+            expect(template).toContain('font-weight: bold');
+        });
+
+        it('should have checkboxes bound to selectedItems', () => {
+            const template = App.template;
+            expect(template).toContain('v-model="selectedItems_a"');
+            expect(template).toContain('v-model="selectedItems_b"');
+            expect(template).toContain('v-model="selectedItems_c"');
         });
     });
 });
